@@ -1,0 +1,23 @@
+{
+  "titleId": "01bff8b684070000",
+  "name": "nxjs-unzip",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "build": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js",
+    "nro": "nxjs-pack",
+    "export": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js && nxjs-pack",
+    "test": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js && nxjs-pack && curl -T nxjs-unzip.nro ftp://192.168.1.47:5000/switch/"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.17.19",
+    "nxjs-pack": "^0.0.32",
+    "nxjs-runtime": "^0.0.32"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "sisteransi": "^1.0.5"
+  }
+}
