@@ -11,8 +11,8 @@ Copy `nxjs-unzip.nro` to `/switch`. The app will appear on the Homebrew Menu.
 
 ## Credits
 
-[TooTallNate - nxjs](https://github.com/TooTallNate/nx.js) - JS runtime for the Switch
-[mklan - nx-archive-browser ](https://github.com/mklan/nx-archive-browser) - Download file from url or sd card
+- [TooTallNate - nxjs](https://github.com/TooTallNate/nx.js) - JS runtime for the Switch.
+- [mklan - nx-archive-browser ](https://github.com/mklan/nx-archive-browser) - Download file from url or sd card.
 
 ## Feature
 
