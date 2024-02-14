@@ -2,7 +2,7 @@
 
 Unzip file from internet or sd card
 
-<img src="https://github.com/PhamMinhKha/nxjs-unzip/raw/main/screenshot.jpg" width="800" />
+<img src="https://github.com/PhamMinhKha/nxjs-unzip/raw/master/screenshot.jpg" width="800" />
 
 
 ## Install
