@@ -17,13 +17,25 @@ npm i nxjs-unzip
 
 ```
 import unzip from "nxjs-unzip";
-unzip("https://domain/file.zip", "sdmc:/", true)
+unzip("https://domain/file.zip", "sdmc:/")
 
 \\or
 
 import unzip from "nxjs-unzip"
 
-unzip("demo.zip", "sdmc:/", true).then(result => {
+type myState = "unzip" | "download"
+interface callback_return {
+    state: myState,
+    msg: number
+}
+
+console.log("start unzip");
+
+function callback(status:callback_return)
+{
+    return console.log(status);
+}
+unzip("demo.zip", "sdmc:/", callback, false).then(result => {
     if(result){
         console.log("unzip complete!");
     }

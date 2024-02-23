@@ -6,12 +6,19 @@ import { erase } from "sisteransi";
  * @param outDir path to unzip, default is = "sdmc:/"
  * @returns boolean
  */
-async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/"): Promise<boolean> {
+
+
+async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/", callback_status?: Function): Promise<boolean> {
     try {
         return await jsZip.loadAsync(buffer).then(async function (zip: any) {
-            if (is_show_log) {
-                console.log("Unzip start");
+            if (callback_status) {
+                callback_status({
+                    state: "unzip",
+                    msg: 0
+                })
             }
+            if (is_show_log)
+                console.log("Unzip start");
             var list_file: any[] = []
             var list_folder: any[] = []
             Object.keys(zip.files).forEach(function (filename) {
@@ -21,18 +28,37 @@ async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/"): Promise
                     list_folder.push(filename)
                 }
             })
+            var lastChar = outDir.charAt(outDir.length - 1);
+            if (lastChar !== "/")
+            {
+                outDir+="/"
+            }
             //step 1: create folder before file
             for await (var f of list_folder) {
                 Switch.mkdirSync(`${outDir}${f}`);
+                if (callback_status) {
+                    callback_status({
+                        state: "unzip",
+                        msg: 0
+                    })
+                }
                 if (is_show_log) {
                     console.log(`Create folder: ${f}`);
                 }
             }
             //step 2: copy file to folder
+            let i = 0
+            let countFile = list_file.length
             for await (var file of list_file) {
                 await zip.files[file].async('arraybuffer').then(async function (fileData: ArrayBuffer) {
                     try {
                         await Switch.writeFileSync(`${outDir}${file}`, fileData);
+                        if (callback_status) {
+                            callback_status({
+                                state: "unzip",
+                                mes: Math.round(i / countFile * 100)
+                            })
+                        }
                         if (is_show_log) {
                             console.log(`Copy file: ${file}`);
                         }
@@ -41,7 +67,14 @@ async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/"): Promise
                         //Nếu bị lỗi thì tập tin có thể là một folder
                         Switch.mkdirSync(`${outDir}${file}`);
                     }
-                   
+
+                })
+                i++
+            }
+            if (callback_status) {
+                callback_status({
+                    state: "unzip",
+                    msg: 100
                 })
             }
             if (is_show_log) {
@@ -62,7 +95,7 @@ async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/"): Promise
  * @param url can is path of file or https link to file
  * @returns ReadableStream
  */
-async function readFile(url: string) {
+async function readFile(url: string, callback_status?: Function) {
     // Step 1: start the fetch and obtain a reader
     const response = await fetch(url);
 
@@ -112,10 +145,15 @@ async function readFile(url: string) {
 
                         last = { ...current };
                     }
+                    if (callback_status) {
+                        callback_status({
+                            state: "download",
+                            msg: Math.round(progress * 100)
+                        })
+                    }
                     if (is_show_log) {
                         console.log(erase.screen);
                         console.log("Download: " + Math.round(progress * 100) + " - speed:" + speed);
-
                     }
                     counter += 1;
                     return pump();
@@ -132,21 +170,34 @@ function byteToMB(value: number) {
  * Unzip file 
  * @param path can url or path of file
  * @param outDir out folder
+ * @param callback callback function 
  * @param log show log if you want
  * @default 
  * outDir= "sdmc:/"
+ * callback = undefined
  * log = false
  * @example 
  * ```
  * unzip("https://domain/file.zip", "sdmc:/switch", true)
  * ```
  */
-var is_show_log = false
-async function unzip(path: string, outDir: string = "sdmc:/", log: boolean = false) {
-    var blob = await readFile(path).then((res) => res.blob());
+type myState = "unzip" | "download"
+interface callback_return {
+    state: myState,
+    msg: number
+}
+var is_show_log: boolean = false
+async function unzip(path: string, outDir: string = "sdmc:/", callback?: Function, log = false) {
     is_show_log = log;
+    var blob
+    try {
+        blob = await readFile(path, callback).then((res) => res.blob());  
+    } catch (error) {
+        console.log("File can't download");
+    }
+   
     const buffer = await new Response(blob).arrayBuffer();
-    var unzip_complete = await js_unzip(buffer, outDir);
+    var unzip_complete = await js_unzip(buffer, outDir, callback);
     if (unzip_complete) {
         return true
     } else {
