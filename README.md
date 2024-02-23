@@ -4,15 +4,40 @@ Unzip file from internet or sd card
 
 <img src="https://github.com/PhamMinhKha/nxjs-unzip/raw/master/screenshot.jpg" width="800" />
 
+## Require
+nxjs-runtime > 0.0.36
 
 ## Install
 
-Copy `nxjs-unzip.nro` to `/switch`. The app will appear on the Homebrew Menu.
+```
+npm i nxjs-unzip
+```
+
+## Use
+
+```
+import unzip from "nxjs-unzip";
+unzip("https://domain/file.zip", "sdmc:/", true)
+
+\\or
+
+import unzip from "nxjs-unzip"
+
+unzip("demo.zip", "sdmc:/", true).then(result => {
+    if(result){
+        console.log("unzip complete!");
+    }
+    else {
+        console.log("unzip error!");
+    }
+})
+```
 
 ## Credits
 
 - [TooTallNate - nxjs](https://github.com/TooTallNate/nx.js) - JS runtime for the Switch.
 - [mklan - nx-archive-browser ](https://github.com/mklan/nx-archive-browser) - Download file from url or sd card.
+- [Stuk - jszip ](https://github.com/Stuk/jszip) - Unzip with javascript
 
 ## Feature
 

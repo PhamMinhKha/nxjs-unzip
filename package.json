@@ -1,23 +1,35 @@
 {
   "titleId": "01bff8b684070000",
   "name": "nxjs-unzip",
-  "version": "0.0.0",
-  "private": true,
-  "description": "",
+  "version": "0.0.4",
+  "main": "src/index.ts",
+  "author": "PhamMinhKha",
+  "keywords": [
+    "nx.js",
+    "nxjs unzip"
+  ],
+  "private": false,
+  "description": "Use for nx.js project",
   "scripts": {
     "build": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js",
-    "nro": "nxjs-pack",
+    "nro": "nxjs-nro",
     "export": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js && nxjs-pack",
-    "test": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js && nxjs-pack && curl -T nxjs-unzip.nro ftp://192.168.1.47:5000/switch/"
+    "test": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm src/main.ts --outfile=romfs/main.js && nxjs-pack && curl -T nxjs-unzip.nro ftp://192.168.1.47:5000/switch/",
+    "npmtest": "esbuild --bundle --sourcemap --sources-content=false --target=es2022 --format=esm test-folder/main.ts --outfile=romfs/main.js && nxjs-nro && curl -T nxjs-unzip.nro ftp://192.168.1.47:5000/switch/"
   },
   "license": "MIT",
   "devDependencies": {
+    "@nx.js/nro": "^0.0.36",
+    "@nx.js/nsp": "^0.0.36",
     "esbuild": "^0.17.19",
-    "nxjs-pack": "^0.0.32",
-    "nxjs-runtime": "^0.0.32"
+    "nxjs-runtime": "^0.0.36"
   },
   "dependencies": {
     "jszip": "^3.10.1",
     "sisteransi": "^1.0.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PhamMinhKha/nxjs-unzip"
   }
 }
