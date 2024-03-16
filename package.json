@@ -1,7 +1,7 @@
 {
   "titleId": "01bff8b684070000",
   "name": "nxjs-unzip",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "src/index.ts",
   "author": "PhamMinhKha",
   "keywords": [

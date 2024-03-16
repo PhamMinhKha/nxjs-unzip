@@ -7,14 +7,15 @@ import { erase } from "sisteransi";
  * @returns boolean
  */
 
-
-async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/", callback_status?: Function): Promise<boolean> {
+type MyCallbackType = (result: callback_return) => void;
+async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/", callback_status?: MyCallbackType): Promise<boolean> {
     try {
         return await jsZip.loadAsync(buffer).then(async function (zip: any) {
             if (callback_status) {
                 callback_status({
                     state: "unzip",
-                    msg: 0
+                    msg: 0,
+                    data: "Unzip start"
                 })
             }
             if (is_show_log)
@@ -34,18 +35,18 @@ async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/", callback
                 outDir+="/"
             }
             //step 1: create folder before file
-            for await (var f of list_folder) {
-                Switch.mkdirSync(`${outDir}${f}`);
-                if (callback_status) {
-                    callback_status({
-                        state: "unzip",
-                        msg: 0
-                    })
-                }
-                if (is_show_log) {
-                    console.log(`Create folder: ${f}`);
-                }
-            }
+            // for await (var f of list_folder) {
+            //     Switch.mkdirSync(`${outDir}${f}`);
+            //     if (callback_status) {
+            //         callback_status({
+            //             state: "unzip",
+            //             msg: 0
+            //         })
+            //     }
+            //     if (is_show_log) {
+            //         console.log(`Create folder: ${f}`);
+            //     }
+            // }
             //step 2: copy file to folder
             let i = 0
             let countFile = list_file.length
@@ -56,7 +57,8 @@ async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/", callback
                         if (callback_status) {
                             callback_status({
                                 state: "unzip",
-                                mes: Math.round(i / countFile * 100)
+                                msg: Math.round(i / countFile * 100),
+                                data: `Copy file: ${file}`
                             })
                         }
                         if (is_show_log) {
@@ -74,7 +76,8 @@ async function js_unzip(buffer: ArrayBuffer, outDir: string = "sdmc:/", callback
             if (callback_status) {
                 callback_status({
                     state: "unzip",
-                    msg: 100
+                    msg: 100,
+                    data: "Unzip complete!"
                 })
             }
             if (is_show_log) {
@@ -184,10 +187,11 @@ function byteToMB(value: number) {
 type myState = "unzip" | "download"
 interface callback_return {
     state: myState,
-    msg: number
+    msg: number ,
+    data: string
 }
 var is_show_log: boolean = false
-async function unzip(path: string, outDir: string = "sdmc:/", callback?: Function, log = false) {
+async function unzip(path: string, outDir: string = "sdmc:/", callback?: MyCallbackType, log = false) {
     is_show_log = log;
     var blob
     try {
